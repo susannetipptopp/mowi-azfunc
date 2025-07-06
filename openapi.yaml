@@ -1,0 +1,23 @@
+openapi: 3.0.1
+info:
+  title: MOWI Data API
+  version: "1.0"
+servers:
+  - url: https://func-mowi-ol.azurewebsites.net/api/getmowidata
+paths:
+  /GetMowiData:
+    get:
+      summary: Returns MOWI.OL stock data
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
