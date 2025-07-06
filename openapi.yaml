@@ -3,7 +3,7 @@ info:
   title: MOWI Data API
   version: "1.0"
 servers:
-  - url: https://func-mowi-ol.azurewebsites.net/api/getmowidata
+  - url: https://func-mowi-ol.azurewebsites.net/api
 paths:
   /GetMowiData:
     get:
