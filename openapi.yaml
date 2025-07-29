@@ -7,7 +7,7 @@ servers:
 paths:
   /GetMowiData:
     get:
-      summary: Returns MOWI.OL stock data
+      summary: Returns MOWI.OL stock data (quote, history, actions, financials, recommendations)
       parameters:
         - in: query
           name: days
@@ -15,9 +15,78 @@ paths:
             type: integer
             default: 30
       responses:
-        "200":
-          description: OK
+        '200':
+          description: Full Mowi payload
           content:
             application/json:
               schema:
                 type: object
+  /GetMowiQuote:
+    get:
+      summary: Returns the current Mowi quote as JSON.
+      responses:
+        '200':
+          description: Quote only
+          content:
+            application/json:
+              schema:
+                type: object
+  /GetMowiHistory:
+    get:
+      summary: Returns historical data for Mowi over the specified number of days.
+      parameters:
+        - in: query
+          name: days
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Array of historical price records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: One day’s OHLC + volume
+  /GetMowiActions:
+    get:
+      summary: Returns corporate actions for Mowi.
+      responses:
+        '200':
+          description: Array of corporate‐action records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: E.g. dividends, splits, etc.
+  /GetMowiFinancials:
+    get:
+      summary: Returns the financial statements for Mowi.
+      responses:
+        '200':
+          description: Map of statement name → array of table rows
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: object
+                    description: One row in a financial statement
+  /GetMowiRecommendations:
+    get:
+      summary: Returns analyst recommendations for Mowi.
+      responses:
+        '200':
+          description: Array of recommendation entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
