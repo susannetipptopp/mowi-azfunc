@@ -42,7 +42,6 @@ class DateTimeEncoder(json.JSONEncoder):
 app = func.FunctionApp()
 
 # ===== GetMowiData (full payload) =====
-
 @app.function_name(name="GetMowiData")
 @app.route(route="GetMowiData", auth_level=func.AuthLevel.ANONYMOUS)
 def GetMowiData(req: func.HttpRequest) -> func.HttpResponse:
