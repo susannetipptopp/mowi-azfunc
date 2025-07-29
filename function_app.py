@@ -92,5 +92,105 @@ def GetMowiData(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500,
             mimetype="application/json"
         )
+# ===== GetMowiQuote =====
+@app.function_name(name="GetMowiQuote")
+@app.route(route="GetMowiQuote", auth_level=func.AuthLevel.ANONYMOUS)
+def GetMowiQuote(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns the current Mowi quote as JSON."""
+    try:
+        quote = get_mowi_data()
+        body = json.dumps(quote, cls=DateTimeEncoder)
+        return func.HttpResponse(body=body, status_code=200, mimetype="application/json")
+    except Exception as e:
+        logging.error("Error in GetMowiQuote", exc_info=True)
+        error_body = json.dumps({"error": str(e)})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=500,
+            mimetype="application/json"
+        )
+
+# ===== GetMowiHistory =====
+@app.function_name(name="GetMowiHistory")
+@app.route(route="GetMowiHistory", auth_level=func.AuthLevel.ANONYMOUS)
+def GetMowiHistory(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns historical data for Mowi over the specified number of days."""
+    try:
+        days = int(req.params.get("days", 30))
+        records = df_to_records(get_mowi_history(days))
+        body = json.dumps(records, cls=DateTimeEncoder)
+        return func.HttpResponse(body=body, status_code=200, mimetype="application/json")
+    except ValueError:
+        logging.warning("Invalid 'days' parameter for GetMowiHistory", exc_info=True)
+        error_body = json.dumps({"error": "Parameter 'days' must be an integer."})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=400,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        logging.error("Error in GetMowiHistory", exc_info=True)
+        error_body = json.dumps({"error": str(e)})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=500,
+            mimetype="application/json"
+        )
+
+# ===== GetMowiActions =====
+@app.function_name(name="GetMowiActions")
+@app.route(route="GetMowiActions", auth_level=func.AuthLevel.ANONYMOUS)
+def GetMowiActions(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns corporate actions for Mowi."""
+    try:
+        actions = df_to_records(get_mowi_actions())
+        body = json.dumps(actions, cls=DateTimeEncoder)
+        return func.HttpResponse(body=body, status_code=200, mimetype="application/json")
+    except Exception as e:
+        logging.error("Error in GetMowiActions", exc_info=True)
+        error_body = json.dumps({"error": str(e)})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=500,
+            mimetype="application/json"
+        )
+
+# ===== GetMowiFinancials =====
+@app.function_name(name="GetMowiFinancials")
+@app.route(route="GetMowiFinancials", auth_level=func.AuthLevel.ANONYMOUS)
+def GetMowiFinancials(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns the financial statements for Mowi."""
+    try:
+        financials = get_mowi_financials()
+        formatted = {stmt: df_to_records(df) for stmt, df in financials.items()}
+        body = json.dumps(formatted, cls=DateTimeEncoder)
+        return func.HttpResponse(body=body, status_code=200, mimetype="application/json")
+    except Exception as e:
+        logging.error("Error in GetMowiFinancials", exc_info=True)
+        error_body = json.dumps({"error": str(e)})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=500,
+            mimetype="application/json"
+        )
+
+# ===== GetMowiRecommendations =====
+@app.function_name(name="GetMowiRecommendations")
+@app.route(route="GetMowiRecommendations", auth_level=func.AuthLevel.ANONYMOUS)
+def GetMowiRecommendations(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns analyst recommendations for Mowi."""
+    try:
+        recs = df_to_records(get_mowi_recommendations())
+        body = json.dumps(recs, cls=DateTimeEncoder)
+        return func.HttpResponse(body=body, status_code=200, mimetype="application/json")
+    except Exception as e:
+        logging.error("Error in GetMowiRecommendations", exc_info=True)
+        error_body = json.dumps({"error": str(e)})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=500,
+            mimetype="application/json"
+        )
+
         
 
