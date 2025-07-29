@@ -91,3 +91,21 @@ def GetMowiData(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500,
             mimetype="application/json"
         )
+        
+# ===== GetMowiQuote =====
+@app.function_name(name="GetMowiQuote")
+@app.route(route="GetMowiQuote", auth_level=func.AuthLevel.ANONYMOUS)
+def GetMowiQuote(req: func.HttpRequest) -> func.HttpResponse:
+    """Returns the current Mowi quote as JSON."""
+    try:
+        quote = get_mowi_data()
+        body = json.dumps(quote, cls=DateTimeEncoder)
+        return func.HttpResponse(body=body, status_code=200, mimetype="application/json")
+    except Exception as e:
+        logging.error("Error in GetMowiQuote", exc_info=True)
+        error_body = json.dumps({"error": str(e)})
+        return func.HttpResponse(
+            body=error_body,
+            status_code=500,
+            mimetype="application/json"
+        )
